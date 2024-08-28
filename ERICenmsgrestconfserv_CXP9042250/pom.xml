@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.ericsson.oss.servicegroupcontainers</groupId>
+        <artifactId>restconfserv</artifactId>
+        <version>1.5.1-SNAPSHOT</version>
+    </parent>
+    <groupId>com.ericsson.oss.servicegroupcontainers</groupId>
+    <artifactId>ERICenmsgrestconfserv_CXP9042250</artifactId>
+    <packaging>${rpm.packaging}</packaging>
+    <name>restconfserv feature CXP module</name>
+    <properties>
+        <com.ericsson.oss.rpm.architecture>noarch</com.ericsson.oss.rpm.architecture>
+        <rpm-root>ericsson</rpm-root>
+        <comp-name>enm</comp-name>
+        <install-path>jboss</install-path>
+        <publish_artifact>true</publish_artifact>
+        <media.category>service</media.category>
+        <!-- this is in the integration pom, which needs to be merged -->
+        <vm.jboss-install-path>/ericsson/3pp/jboss</vm.jboss-install-path>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.ericsson.oss.itpf.deployment</groupId>
+                <artifactId>deployment-descriptor-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>configurable-entity</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <configEntity>
+                        <stereotype>SERVICE_PKG</stereotype>
+                        <parameters>
+                            <property name="vm_service_name" defaultValue="restconfserv" />
+                            <itemType name="vm-package">
+                                <property name="name" defaultValue="ERICenmsgrestconfserv_CXP9042250" />
+                            </itemType>
+                        </parameters>
+                        <deploymentDependencies>
+                            <deploymentDependency>
+                                <groupId>com.ericsson.oss.itpf.deployment.tools</groupId>
+                                <artifactId>virtual-machine</artifactId>
+                                <qualifier>CONTAINER</qualifier>
+                                <alias>restconfserv-vm</alias>
+                            </deploymentDependency>
+                            <deploymentDependency>
+                                <groupId>com.ericsson.oss.services.restconf.topologyservice</groupId>
+                                <artifactId>ERICrestconftopologyservicemodel_CXP9042252</artifactId>
+                                <alias>restconf-topology-service-model</alias>
+                            </deploymentDependency>
+                        </deploymentDependencies>
+                        <assignments>
+                            <assign>
+                                <path>restconfserv-vm</path>
+                                <property name="routable_interfaces" value="0" />
+                                <itemType name="vm-service">
+                                    <property name="service_name" value="restconfserv" />
+                                    <property name="cpus" value="2" />
+                                    <property name="ram" value="4096M" />
+                                    <property name="image_name" value="rhel7-jboss-image" />
+                                </itemType>
+                                <itemType name="vcs-clustered-service">
+                                    <property name="active" value="2" />
+                                    <property name="standby" value="0" />
+                                </itemType>
+                            </assign>
+                            <assign>
+                                <path>restconfserv-vm</path>
+                                <scope>PHYSICAL_PRODUCTION</scope>
+                                <itemType name="vm-service">
+                                    <property name="cpus" value="2" />
+                                    <property name="ram" value="4096M" />
+                                </itemType>
+                                <itemType name="vcs-clustered-service">
+                                    <property name="active" value="${(maxCells == 60000 and geoMetro == 1) ? ':4' : 2}" />
+                                    <property name="standby" value="0" />
+                                </itemType>
+                            </assign>
+                            <assign>
+                                <path>restconfserv-vm</path>
+                                <scope>PHYSICAL_TEST</scope>
+                                <itemType name="vm-service">
+                                    <property name="cpus" value="2" />
+                                    <property name="ram" value="4096M" />
+                                </itemType>
+                            </assign>
+                            <assign>
+                                <path>restconfserv-vm</path>
+                                <scope>CLOUD</scope>
+                                <itemType name="vm-service">
+                                    <property name="cpus" value="2" />
+                                    <property name="ram" value="4096M" />
+                                </itemType>
+                                <itemType name="vcs-clustered-service">
+                                    <property name="offline_timeout" value="600" />
+                                    <property name="online_timeout" value="1500" />
+                                </itemType>
+                            </assign>
+                        </assignments>
+                    </configEntity>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>timestamp-property</id>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>this.year</name>
+                            <pattern>yyyy</pattern>
+                            <unit>year</unit>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <skip>true</skip>
+                    <inherited>true</inherited>
+                    <copyright>${this.year} Ericsson AB. All rights reserved</copyright>
+                    <description>${ericsson.rstate}</description>
+                    <group>ERI-NMS</group>
+                    <vendor>Ericsson AB</vendor>
+                    <url>www.ericsson.com</url>
+                    <requires>
+                        <!-- JAVA 8 -->
+                        <require>EXTRserverjre_CXP9035480</require>
+                        <!-- EAP 7 -->
+                        <require>EXTReap7_CXP9037438</require>
+                        <!-- JBoss 7-->
+                        <require>ERICeap7config_CXP9037440</require>
+
+                        <!-- Common Components -->
+                        <require>ERICpib2_CXP9037459</require>
+
+                        <!-- Service Framework -->
+                        <require>ERICserviceframework4_CXP9037454</require>
+                        <require>ERICserviceframeworkmodule4_CXP9037453</require>
+
+                        <!-- DPS -->
+                        <require>ERICdpsruntimeapi_CXP9030469</require>
+                        <require>ERICdpsruntimeimpl_CXP9030468</require>
+
+                        <!-- Model Service -->
+                        <require>ERICmodelserviceapi_CXP9030594</require>
+                        <require>ERICmodelservice_CXP9030595</require>
+
+                        <!--  DDP -->
+                        <require>ERICddc_CXP9030294</require>
+
+                        <!-- RestConf -->
+                        <require>ERICrestconftopologyservice_CXP9042251</require>
+                    </requires>
+                    <mappings>
+                        <mapping>
+                            <directory>${vm.jboss-install-path}/standalone/configuration</directory>
+                            <filemode>700</filemode>
+                            <username>${jboss-username}</username>
+                            <groupname>${jboss-groupname}</groupname>
+                            <configuration>false</configuration>
+                            <recurseDirectories>false</recurseDirectories>
+                            <sources>
+                                <source>
+                                    <location>src/main/resources</location>
+                                    <includes>
+                                        <include>overload-protection-config.json</include>
+                                    </includes>
+                                </source>
+                            </sources>
+                        </mapping>
+                        <mapping>
+                            <directory>${vm.jboss-install-path}/bin/cli/services</directory>
+                            <filemode>440</filemode>
+                            <username>${jboss-username}</username>
+                            <groupname>${jboss-groupname}</groupname>
+                            <configuration>false</configuration>
+                            <directoryIncluded>false</directoryIncluded>
+                            <recurseDirectories>false</recurseDirectories>
+                            <sources>
+                                <source>
+                                    <location>src/main/resources/cli/scripts/</location>
+                                    <includes>
+                                        <include>README</include>
+                                        <include>*.cli</include>
+                                    </includes>
+                                </source>
+                            </sources>
+                        </mapping>
+                        <mapping>
+                            <directory>${vm.jboss-install-path}</directory>
+                            <filemode>755</filemode>
+                            <username>${jboss-username}</username>
+                            <groupname>${jboss-groupname}</groupname>
+                            <configuration>false</configuration>
+                            <directoryIncluded>false</directoryIncluded>
+                            <recurseDirectories>false</recurseDirectories>
+                            <sources>
+                                <source>
+                                    <location>src/main/resources/jboss-as.conf</location>
+                                    <destination>jboss-as.conf</destination>
+                                </source>
+                                <source>
+                                    <location>src/main/resources/jboss-as.conf</location>
+                                    <destination>jboss-as-flavour-4G.conf</destination>
+                                </source>
+                                <source>
+                                    <location>src/main/resources/jboss-as.conf</location>
+                                    <destination>jboss-as-flavour-6G.conf</destination>
+                                </source>
+                                <source>
+                                    <location>src/main/resources/jboss-as.conf</location>
+                                    <destination>app-server.conf</destination>
+                                </source>
+                            </sources>
+                        </mapping>
+                        <mapping>
+                            <directory>${vm.jboss-install-path}/bin</directory>
+                            <filemode>400</filemode>
+                            <username>${jboss-username}</username>
+                            <groupname>${jboss-groupname}</groupname>
+                            <configuration>false</configuration>
+                            <directoryIncluded>false</directoryIncluded>
+                            <recurseDirectories>false</recurseDirectories>
+                            <sources>
+                                <source>
+                                    <location>src/main/resources</location>
+                                    <includes>
+                                        <include>jboss-as-remote-ejb.conf</include>
+                                    </includes>
+                                </source>
+                            </sources>
+                        </mapping>
+                        <mapping>
+                            <directory>${vm.jboss-install-path}/bin/pre-start</directory>
+                            <filemode>755</filemode>
+                            <username>${jboss-username}</username>
+                            <groupname>${jboss-groupname}</groupname>
+                            <configuration>false</configuration>
+                            <directoryIncluded>false</directoryIncluded>
+                            <recurseDirectories>false</recurseDirectories>
+                            <sources>
+                                <source>
+                                    <location>src/main/resources</location>
+                                    <includes>
+                                        <include>oomKillerTuning.sh</include>
+                                    </includes>
+                                </source>
+                            </sources>
+                        </mapping>
+                    </mappings>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

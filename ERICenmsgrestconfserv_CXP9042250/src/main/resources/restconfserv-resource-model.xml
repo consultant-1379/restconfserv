@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configEntity xmlns="http://www.ericsson.com/oss/itpf/deployment/dst/descriptor">
+  <description>restconfserv</description>
+  <singleton>true</singleton>
+  <scaleUnit>
+    <loadDrivers>
+    </loadDrivers>
+    <minimumUnit>
+      <profile>
+        <cpuCores>2</cpuCores>
+        <cpuMinutes>0</cpuMinutes>
+        <peakCpuMinutes>0</peakCpuMinutes>
+        <memory>4096</memory>
+      </profile>
+      <profileConversionFormulae>
+        <cpuCores>0</cpuCores>
+        <cpuMinutes>0</cpuMinutes>
+        <peakCpuMinutes>0</peakCpuMinutes>
+        <memory>0</memory>
+      </profileConversionFormulae>
+    </minimumUnit>
+    <optimalUnit>
+      <profile>
+        <cpuCores>2</cpuCores>
+        <cpuMinutes>0</cpuMinutes>
+        <peakCpuMinutes>0</peakCpuMinutes>
+        <memory>4096</memory>
+      </profile>
+      <profileConversionFormulae>
+        <cpuCores>0</cpuCores>
+        <cpuMinutes>0</cpuMinutes>
+        <peakCpuMinutes>0</peakCpuMinutes>
+        <memory>0</memory>
+      </profileConversionFormulae>
+    </optimalUnit>
+  </scaleUnit>
+  <parameters>
+  </parameters>
+  <deploymentDependencies/>
+  <assignments/>
+</configEntity>
+
+

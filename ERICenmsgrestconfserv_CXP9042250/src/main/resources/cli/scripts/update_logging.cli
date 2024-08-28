@@ -1,0 +1,9 @@
+#Update the filter-spec under SYSLOG custom-handler
+if (outcome == success) of /subsystem=logging/custom-handler=SYSLOG:write-attribute(name=filter-spec, value=not(match("Caught exception mapped into XA Exception|onePhaseCommit|EJB Invocation failed on component|Failure in caller transaction")))
+end-if
+
+#Update the server.log configuration
+if (outcome == success) of /subsystem=logging/size-rotating-file-handler=ENM_FILE:write-attribute(name=rotate-size, value=200m)
+end-if
+if (outcome == success) of /subsystem=logging/size-rotating-file-handler=ENM_FILE:write-attribute(name=max-backup-index, value=5)
+end-if

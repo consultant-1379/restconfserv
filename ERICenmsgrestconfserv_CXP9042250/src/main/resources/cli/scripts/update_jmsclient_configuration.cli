@@ -1,0 +1,4 @@
+echo "starting update_jmsclient_configuration.cli:"
+#Insert the JMS connection factories into the standalone
+if (outcome == success) of /subsystem=messaging-activemq/server=default/connection-factory=RemoteConnectionFactory:add(entries=[java:/ConnectionFactory],connectors=[remote-jms1],retry-interval=500,retry-interval-multiplier=5.0,max-retry-interval=10000,reconnect-attempts=32767)
+end-if

@@ -1,0 +1,12 @@
+##update jboss system properties
+##update management interface
+echo "Updating management-interface"
+
+if (outcome == success) of /core-service=management/management-interface=http-interface:write-attribute(name=http-upgrade,value={"enabled" => true})
+end-if
+
+##update ee subsystem
+echo "updating ee subsystem"
+
+if (outcome == success) of /subsystem=ee:write-attribute(name=annotation-property-replacement,value=false)
+end-if

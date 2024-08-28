@@ -1,0 +1,8 @@
+echo "starting add_jms_topics.cli:"
+## Topic
+if (outcome == success) of /subsystem=messaging-activemq/server=default/jms-topic=Clustered-dps-notification-event:add(entries=[topic/dps-notification-event-amq java:jboss/exported/jms/topic/dps-notification-event-amq])
+end-if
+if (outcome == success) of /subsystem=messaging-activemq/server=default/jms-queue=Clustered-security-dps-notification-event:add(entries=[queue/security-dps-notification-event-amq java:jboss/exported/jms/queue/security-dps-notification-event-amq])
+end-if
+if (outcome == success) of /subsystem=messaging-activemq/server=default/jms-topic=modelDeploymentEvents:add(entries=[topic/modelDeploymentEvents-amq java:jboss/exported/jms/topic/modelDeploymentEvents-amq])
+end-if
